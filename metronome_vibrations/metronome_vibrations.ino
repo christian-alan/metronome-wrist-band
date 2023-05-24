@@ -1,11 +1,27 @@
 #include <TinkerKit.h>
 #include <LiquidCrystal.h>
 
+// Event looping variables
+const unsigned long eventInterval = 4000;
+unsigned long previousTime = 0;
 
-// Set the BPM over here
+
+// Vibration variables
+const unsigned int shortVibrationInterval = 80;
+unsigned long sv_previousTime = 0;
+
+
+const unsigned int longVibrationInterval = 160;
+
+
+// BPM and Time signature variables
 int bpm = 80; 
 String signatures[] = {"1/4","2/4","3/4","4/4","5/4","7/4"};
 int currentSignature = 0;
+
+
+
+
 
 
 // Screen variables
@@ -26,6 +42,17 @@ void shortVibration(){
   buzzer.on();
   delay(80);
   buzzer.off();
+    // unsigned long currentTime = millis();
+    // buzzer.on();
+    // Serial.println(currentTime - sv_previousTime);
+   
+    // if(currentTime - sv_previousTime >= shortVibrationInterval){
+    //   buzzer.off();
+    //   sv_previousTime = currentTime;
+    // }
+
+
+
 }
 
 // Long vibration
@@ -144,7 +171,8 @@ void signatureVal(){
     break;
 
   }
-
+  Serial.println(bpm);
+  Serial.println(signatures[currentSignature]);
 }
 
 
@@ -171,13 +199,27 @@ void lcdDisplay(){
 void setup() {
  Serial.begin(9600);
  lcd.begin(16, 2);
- lcd.clear();
+ lcd.clear(); 
+//  lcdDisplay();
+//  lcd.print("Hey");
+
 }
 
 void loop() {  
    potBpmVal();
    signatureVal();
-  //  lcd.clear();  // Clears the LCD
-  //  lcdDisplay(); // Displays the content
+ 
+
+
+
+    unsigned long currentTime = millis();
+    if(currentTime - previousTime >= eventInterval){
+        Serial.println(signatures[currentSignature]);
+        Serial.println(bpm);
+       lcd.clear();  // Clears the LCD
+       lcdDisplay(); // Displays the content
+    
+      previousTime = currentTime;
+    }
 }
 
